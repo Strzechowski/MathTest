@@ -1,26 +1,23 @@
 <template>
   <div id="test">
-    <h2>Math Quiz</h2>
+    <h1>Math Quiz</h1>
 
     <b-container>
-      <b-row v-for="equation in equations" :key="equation.id" class="justify-content-md-center">
-        <b-col
-          class="my-b-col"
-          v-for="(el, i) in equation.elements"
-          :key="`${el}_${i}`"
-          col
-          sm="1"
-        >{{el}}</b-col>
-        <b-col class="my-b-col-answer" col sm="1">
-          <b-form-input class="my-b-form-input" v-model="answers[equation.id]" placeholder="..."></b-form-input>
+      <b-row v-for="equation in equations" :key="equation.id" class="justify-content-center">
+        <b-col class="my-b-col" cols="4" >
+          {{equation.elements[0]}} {{equation.elements[1]}} {{equation.elements[2]}} {{equation.elements[3]}}
         </b-col>
-        <b-col v-if="results[equation.id] === 'right'" class="right my-b-col" col sm="1">GOOD</b-col>
-        <b-col v-if="results[equation.id] === 'wrong'" class="wrong my-b-col" col sm="1">BAD</b-col>
+        <b-col class="my-b-col-answer" cols="3" >
+          <b-form-input class="my-b-form-input" :disabled=areAnswersSubmited v-model="answers[equation.id]" placeholder="..."></b-form-input>
+        </b-col>
+        <b-col v-if="results[equation.id] === 'right'" class="right my-b-col" cols="3">GOOD</b-col>
+        <b-col v-if="results[equation.id] === 'wrong'" class="wrong my-b-col" cols="3">BAD</b-col>
       </b-row>
 
-      <b-row class="justify-content-md-center">
-        <b-col col sm="2">
-          <b-button variant="primary" @click="submitAnswers">Submit</b-button>
+      <b-row class="justify-content-center">
+        <b-col>
+          <b-button size="lg" v-if=!areAnswersSubmited variant="primary" @click="submitAnswers">Submit</b-button>
+          <b-button szie="lg" v-else variant="primary" @click="restartQuiz">Try again!</b-button>
         </b-col>
       </b-row>
     </b-container>
@@ -31,6 +28,7 @@
 export default {
   data() {
     return {
+      areAnswersSubmited: false,
       equations: [],
       answers: [],
       results: []
@@ -65,7 +63,14 @@ export default {
       let temp_results = [];
       for (let i = 1; i < this.equations.length + 1; i++)
         temp_results[i] = this.checkAnswer(i);
+      this.areAnswersSubmited = true
       return (this.results = temp_results);
+    },
+    restartQuiz() {
+      this.results = []
+      this.createEquations()
+      this.areAnswersSubmited = false
+      this.answers = []
     },
     checkAnswer(resultNumber) {
       var equation = this.equations[resultNumber - 1];
@@ -101,8 +106,12 @@ export default {
 </script>
 
 <style scoped>
+h1 {
+  font-size: 7vmin;
+}
+
 .my-b-col {
-  font-size: 25px;
+  font-size: 6vmin;
   background-color: lightskyblue;
   margin: 0px 5px;
   padding: 5px 0 0 0;
@@ -114,16 +123,22 @@ export default {
   background-color: lightcoral;
 }
 
+.container-sm {
+  max-width: max-content;
+}
+
 .right {
   background-color: lightgreen;
 }
 
-.justify-content-md-center {
+.justify-content-center {
+  padding: 0;
   margin: 40px 0px;
 }
 
 .my-b-col-answer {
-  font-size: 25px;
+  padding: 0;
+  font-size: 5vmin;
   background-color: lightgrey;
   margin: 0px 5px;
   border-radius: 5px;
@@ -132,8 +147,8 @@ export default {
 
 .my-b-form-input {
   text-align: center;
-  font-size: 25px;
-  border: lightgrey;
+  font-size: 5vmin;
   background-color: lightgrey;
 }
+
 </style>
